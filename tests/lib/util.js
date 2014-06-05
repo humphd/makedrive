@@ -54,15 +54,15 @@ function getConnectionID(jar, callback){
 
     data += chunk;
 
-    // Look for something like data: {"connectionId":"91842458-d5f7-486f-9297-52e460c3ab38"}
-    var match = /data: {"connectionId"\s*:\s*"(\w{8}(-\w{4}){3}-\w{12}?)"}/.exec(data);
+    // Look for something like data: {"syncId":"91842458-d5f7-486f-9297-52e460c3ab38"}
+    var match = /data: {"syncId"\s*:\s*"(\w{8}(-\w{4}){3}-\w{12}?)"}/.exec(data);
     if(match) {
       callbackCalled = true;
       callback(null, {
         close: function() {
           stream && stream.end();
         },
-        connectionID: match[1]
+        syncId: match[1]
       });
     }
   });
@@ -133,6 +133,34 @@ function authenticateAndConnect(options, callback) {
   });
 }
 
+function syncRouteConnect(callback){
+  request.get({
+        url: serverURL + '/api/sync/' + getConnectionID.syncId,
+        jar: jar
+      });
+}
+
+function sourceRouteConnect(callback){
+ request.post({
+        url: serverURL + '/api/sync/' + getConnectionID.syncId + '/sources',
+        jar: jar
+      });
+}
+
+function csRouteConnect(callback){
+  request.get({
+        url: serverURL + '/api/sync/' + getConnectionID.syncId + '/checksums',
+        jar: jar
+      });
+}
+
+function diffRouteConnect(callback){
+  request.get({
+        url: serverURL + '/api/sync/' + getConnectionID.syncId + '/diffs',
+        jar: jar
+      });
+}
+
 module.exports = {
   app: app,
   serverURL: serverURL,
@@ -140,5 +168,9 @@ module.exports = {
   username: uniqueUsername,
   createJar: jar,
   authenticate: authenticate,
-  authenticatedConnection: authenticateAndConnect
+  authenticatedConnection: authenticateAndConnect,
+  syncRouteConnect: syncRouteConnect,
+  sourceRouteConnect: sourceRouteConnect,
+  csRouteConnect: csRouteConnect,
+  diffRouteConnect: diffRouteConnect
 };
