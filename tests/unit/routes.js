@@ -62,7 +62,8 @@ describe('/api/sync/:syncId/checksums', function () {
         jar: result.jar
       }, function(err, res, body) {
         expect(err).not.to.exist;
-        expect(res.json).to.deep.equal({ 200, { checksums: 'checksums' } });
+        expect(body.checksums).to.exist;
+        expect(res.statusCode).to.equal(200);
         result.done();
       });
     });
@@ -79,7 +80,7 @@ describe('/api/sync/:syncId/diffs', function () {
         jar: result.jar
       }, function(err, res, body) {
         expect(err).not.to.exist;
-        expect(res.json).to.deep.equal(200);
+        expect(res.statusCode).to.equal(200);
         result.done();
       });
     });
@@ -96,7 +97,8 @@ describe('/healthcheck', function () {
         jar: result.jar
       }, function(err, res, body) {
         expect(err).not.to.exist;
-        expect(res.json).to.deep.equal({http: 'okay', version: 'version'});
+        expect(body.http).to.be('okay');
+        expect(body.version).to.exist;
         result.done();
       });
     });
