@@ -137,7 +137,6 @@ console.log('here')
         delete req.session.sync;
         return res.json(500, { message: "Ending sync! Fatal error generating checksums: " + err });
       }
-
       res.json(200, { checksums: checksums });
     });
   });

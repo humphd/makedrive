@@ -193,6 +193,7 @@ function csRouteConnect(options, extras, callback){
   request.get(extras, function(err, res, body) {
       expect(err).not.to.exist;
       options.statusCode = res.statusCode;
+      options.body = body;
       callback(null, options);
   });
 }
@@ -213,7 +214,7 @@ function diffRouteConnect(options, extras, callback){
 
 //  options.jar = options.jar;
 
-  request.get(extras, function(err, res, body) {
+  request.put(extras, function(err, res, body) {
       expect(err).not.to.exist;
       options.statusCode = res.statusCode;
       callback(null, options);
