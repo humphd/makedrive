@@ -65,13 +65,13 @@ describe('Test util.js', function () {
       expect(result.username).to.equal(username);
 
       // Trying to login a second time as this user will 401 if session info is set
-      request.get({
+      request.post({
         url: util.serverURL + '/mocklogin/' + username,
         jar: result.jar
       }, function(err, res, body) {
-        expect(err).not.to.exist;
-        expect(res.statusCode).to.equal(401);
-        done();
+           expect(err).not.to.exist;
+           expect(res.statusCode).to.equal(401);
+           done();
       });
     });
   });
@@ -92,7 +92,7 @@ describe('Test util.js', function () {
       expect(result.username).to.be.a.string;
       expect(result.done).to.be.a.function;
 
-      result.done();
+      //result.done();
 
       request.get({
         url: util.serverURL + '/',
