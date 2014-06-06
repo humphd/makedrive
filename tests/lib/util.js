@@ -151,74 +151,73 @@ function syncRouteConnect(options, callback){
   });
 }
 
-function sourceRouteConnect(options, callback){
+function sourceRouteConnect(options, extras, callback){
   if(typeof options === 'function') {
     callback = options;
     options = {};
   }
 
+  if(typeof extras === 'function') {
+    callback = extras;
+    extras = {};
+  }
+
+  extras.url = serverURL + '/api/sync/' + options.syncId + '/sources';
+  extras.jar =  options.jar;
+
 //  options.jar = options.jar;
 
-  request.post({
-          url: serverURL + '/api/sync/' + options.syncId + '/sources',
-          jar: options.jar
-  }, function(err, res, body) {
+  request.post(extras, function(err, res, body) {
       expect(err).not.to.exist;
+      options.statusCode = res.statusCode;
       callback(null, options);
   });
 }
 
-function csRouteConnect(options, callback){
+function csRouteConnect(options, extras, callback){
   if(typeof options === 'function') {
     callback = options;
     options = {};
   }
 
-  options.jar = options.jar || jar();
+  if(typeof extras === 'function') {
+    callback = extras;
+    extras = {};
+  }
 
-  getConnectionID(options.jar, function(err, result){
-      if(err) {
-        return callback(err);
-      }
+  extras.url = serverURL + '/api/sync/' + options.syncId + '/checksums';
+  extras.jar =  options.jar;
 
-      result.jar = options.jar;
-      result.username = uniqueUsername();
-      result.done = function() {
-        result.close();
-        options.done && options.done();
-      };
+//  options.jar = options.jar;
 
-      callback(null, result);
+  request.get(extras, function(err, res, body) {
+      expect(err).not.to.exist;
+      options.statusCode = res.statusCode;
+      callback(null, options);
   });
-  request.get({
-        url: serverURL + '/api/sync/' + getConnectionID.syncId + '/checksums',
-        jar: jar
-      });
 }
 
-function diffRouteConnect(options, callback){
+function diffRouteConnect(options, extras, callback){
   if(typeof options === 'function') {
     callback = options;
     options = {};
   }
-  getConnectionID(options.jar, function(err, result){
-      if(err) {
-        return callback(err);
-      }
 
-      result.jar = options.jar;
-      result.username = uniqueUsername();
-      result.done = function() {
-        result.close();
-        options.done && options.done();
-      };
+  if(typeof extras === 'function') {
+    callback = extras;
+    extras = {};
+  }
 
-      callback(null, result);
+  extras.url = serverURL + '/api/sync/' + options.syncId + '/diffs';
+  extras.jar =  options.jar;
+
+//  options.jar = options.jar;
+
+  request.get(extras, function(err, res, body) {
+      expect(err).not.to.exist;
+      options.statusCode = res.statusCode;
+      callback(null, options);
   });
-  request.get({
-        url: serverURL + '/api/sync/' + getConnectionID.syncId + '/diffs',
-        jar: jar
-      });
 }
 
 module.exports = {

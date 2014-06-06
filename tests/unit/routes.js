@@ -20,34 +20,30 @@ describe('/api/sync route', function () {
 });
 
 describe('/api/sync/:syncId/sources route', function () {
-  it('should return a 200 if route invocation call is successful', function (done){
+  it('should return a 400 if anything in request.body is screwy', function (done){
     util.authenticatedConnection({done: done}, function(err, result1) {
       expect(err).not.to.exist;
         util.syncRouteConnect(result1, function(err, result2) {
-          util.sourceRouteConnect(result2, function(err, result3) {
-            console.log('\n\n\n\n\n in sourcerouteconnect and result3 is: ', result3)
+          util.sourceRouteConnect(result2, {json: {}}, function(err, result3) {
+            expect(err).not.to.exist;
+            expect(result3.statusCode).to.equal(400);
+            result3.done();
+          });
+      });
+    });
+  });
+  it('should return a kosher 200 when sync successfully retrieves path and srcList', function (done){
+    util.authenticatedConnection({done: done}, function(err, result1) {
+      expect(err).not.to.exist;
+        util.syncRouteConnect(result1, function(err, result2) {
+          util.sourceRouteConnect(result2, {json: {path: '/mmmhm', srcList: 'alright'}}, function(err, result3) {
             expect(err).not.to.exist;
             expect(result3.statusCode).to.equal(200);
             result3.done();
           });
       });
-      
     });
   });
-//  it('should return a 201 when sync successfully retrieves path and srcList', function (done){
-//    util.authenticatedConnection({done: done}, function(err, result) {
-//      expect(err).not.to.exist;
-////    TO BE REPLACED WITH UTIL FUNCTION FOR ROUTE INVOCATION
-////      request.post({
-////        url: util.serverURL + '/api/sync/' + result.syncId + '/sources',
-////        jar: result.jar
-////      }, function(err, res, body) {
-//        expect(err).not.to.exist;
-//        expect(res.statusCode).to.equal(201);
-//        result.done();
-//      });
-//    });
-//  });
 });
 //describe('/api/sync/:syncId/checksums', function () {
 //  it('should return a 200 status code and the checksums after the sync validates', function (done){
