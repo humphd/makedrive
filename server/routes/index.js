@@ -66,6 +66,7 @@ module.exports = function createRoutes( app ) {
    *                 client
    */
   app.get('/api/sync/:connectionId', middleware.authenticationHandler, function (req, res) {
+console.dir('req', req);
     var username = req.params.username,
         sync = Sync.retrieve( username, req.param( 'connectionId' ) );
 
@@ -81,6 +82,7 @@ module.exports = function createRoutes( app ) {
 
     sync.start(function( err, id ) {
       if ( err ) {
+        console.error('sync.start error: ' + err);
         return res.json( 500, err );
       }
 
@@ -135,6 +137,7 @@ module.exports = function createRoutes( app ) {
     sync.generateChecksums(function( err, checksums ) {
       if ( err ) {
         sync.end();
+        console.error('/api/sync/:syncId/checksums error: ' + err);
         delete req.session.sync;
         return res.json(500, { message: "Ending sync! Fatal error generating checksums: " + err });
       }
@@ -194,6 +197,7 @@ module.exports = function createRoutes( app ) {
       sync.patch( diffs, function( err ) {
         sync.end();
         if ( err ) {
+          console.error('/api/sync/:syncId/diffs error: ' + err);
           return res.json(500, { message: "Ending sync! Fatal error while patching: " + err });
         }
         return res.json(200);

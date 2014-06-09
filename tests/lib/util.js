@@ -34,14 +34,14 @@ function uniqueUsername() {
   return 'user' + seed++;
 }
 
-function getConnectionID(jar, callback){
+function getConnectionID(options, callback){
   var headers = {
-   'Accept-Encoding': 'gzip',
+   'Accept-Encoding': 'zlib',
    'Content-Type': 'text/event-stream'
   };
   var stream = request({
     url: serverURL + '/api/sync/updates',
-    jar: jar,
+    jar: options.jar,
     headers: headers
   });
   var callbackCalled = false;
@@ -119,7 +119,7 @@ function authenticateAndConnect(options, callback) {
     }
     var username = result.username;
 
-    getConnectionID(options.jar, function(err, result){
+    getConnectionID(options, function(err, result){
       if(err) {
         return callback(err);
       }
@@ -169,8 +169,6 @@ function sourceRouteConnect(options, extras, callback){
   extras.url = serverURL + '/api/sync/' + options.syncId + '/sources';
   extras.jar =  options.jar;
 
-//  options.jar = options.jar;
-
   request.post(extras, function(err, res, body) {
     if(err) {
       return callback(err);
@@ -195,8 +193,6 @@ function csRouteConnect(options, extras, callback){
   extras.url = serverURL + '/api/sync/' + options.syncId + '/checksums';
   extras.jar =  options.jar;
 
-//  options.jar = options.jar;
-
   request.get(extras, function(err, res, body) {
     if(err) {
       return callback(err);
@@ -220,8 +216,6 @@ function diffRouteConnect(options, extras, callback){
 
   extras.url = serverURL + '/api/sync/' + options.syncId + '/diffs';
   extras.jar =  options.jar;
-
-//  options.jar = options.jar;
 
   request.put(extras, function(err, res, body) {
     if(err) {

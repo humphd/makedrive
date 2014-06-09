@@ -13,6 +13,7 @@ describe('Test util.js', function(){
     util.authenticate({username: username}, function(err, result) {
       expect(err).not.to.exist;
       expect(result.username).to.equal(username);
+      expect(result.jar).to.exist;
 
       // Trying to login a second time as this user will 401 if session info is set
       request.post({
@@ -30,25 +31,27 @@ describe('Test util.js', function(){
     util.authenticate(function(err, result) {
       expect(err).not.to.exist;
       expect(result.username).to.be.a.string;
+      expect(result.jar).to.exist;
       done();
     });
   });
 
   it('util.connection should return syncId and close method on callback', function (done) {
-    util.authenticate(function(err, result) {
+    util.authenticate(function(err, authResult) {
       expect(err).not.to.exist;
-      expect(result.username).to.be.a.string;
-      expect(result.jar).to.exist;
+      expect(authResult.username).to.be.a.string;
+      expect(authResult.jar).to.exist;
 
-      util.connection(result, function(err, result) {
+      util.connection(authResult, function(err, connectionResult) {
         expect(err).not.to.exist;
-        expect(result.syncId).to.match(/\w{8}(-\w{4}){3}-\w{12}?/);
-        expect(result.close).to.be.a.function;
-        result.close();
+        expect(connectionResult.syncId).to.match(/\w{8}(-\w{4}){3}-\w{12}?/);
+        expect(connectionResult.close).to.be.a.function;
+        connectionResult.close();
         done();
       });
     });
   });
+
 
   it('util.connection should return different syncIds on subsequent calls', function(done) {
     util.authenticate(function(err, result) {
@@ -86,10 +89,11 @@ describe('Test util.js', function(){
     expect(username1).not.to.equal(username2);
   });
 
-  it('util.authenticatedConnection should signin and get a connectionID, and username', function(done) {
+  it('util.authenticatedConnection should signin and get a syncId, and username', function(done) {
     util.authenticatedConnection(function(err, result) {
       expect(err).not.to.exist;
       expect(result).to.exist;
+      expect(result.jar).to.exist;
       expect(result.syncId).to.be.a.string;
       expect(result.username).to.be.a.string;
       expect(result.done).to.be.a.function;
@@ -118,4 +122,5 @@ describe('Test util.js', function(){
       });
     });
   });
+
 });

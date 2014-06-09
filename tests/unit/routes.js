@@ -1,7 +1,7 @@
 var request = require('request');
 var expect = require('chai').expect;
 var util = require('../lib/util.js');
-
+/**
 describe('/api/sync route', function () {
   it('should return a 200 status code after trying to access the /api/sync route', function (done){
     util.authenticatedConnection({done: done}, function(err, result) {
@@ -45,6 +45,8 @@ describe('/api/sync/:syncId/sources route', function () {
     });
   });
 });
+
+**/
 
 //describe('/api/sync/:syncId/checksums', function () {
 //  it('should return a 200 status code and the checksums after the sync validates', function (done){
