@@ -18,7 +18,7 @@ describe('/api/sync route', function () {
     });
   });
 });
-
+//
 describe('/api/sync/:syncId/sources route', function () {
   it('should return a 400 if anything in request.body is screwy', function (done){
     util.authenticatedConnection({done: done}, function(err, result1) {
@@ -46,24 +46,24 @@ describe('/api/sync/:syncId/sources route', function () {
   });
 });
 
-describe('/api/sync/:syncId/checksums', function () {
-  it('should return a 200 status code and the checksums after the sync validates', function (done){
-    util.authenticatedConnection({done: done}, function(err, result1) {
-      expect(err).not.to.exist;
-      util.syncRouteConnect(result1, function(err, result2) {
-        expect(err).not.to.exist;
-        util.sourceRouteConnect(result2, {json: {path: '/mmmhm', srcList: 'alright'}}, function(err, result3) {
-          expect(err).not.to.exist;
-          util.csRouteConnect(result3, function(err, result4) {
-            expect(err).not.to.exist;
-            expect(result4.body.checksums).to.exist;
-            result4.done();
-          });
-        });
-      });
-    });
-  });
-});
+//describe('/api/sync/:syncId/checksums', function () {
+//  it('should return a 200 status code and the checksums after the sync validates', function (done){
+//    util.authenticatedConnection({done: done}, function(err, result1) {
+//      expect(err).not.to.exist;
+//      util.syncRouteConnect(result1, function(err, result2) {
+//        expect(err).not.to.exist;
+//        util.sourceRouteConnect(result2, {json: {path: '/mmmhm', srcList: 'alright'}}, function(err, result3) {
+//          expect(err).not.to.exist;
+//          util.csRouteConnect(result3, function(err, result4) {
+//            expect(err).not.to.exist;
+//            expect(result4.body.checksums).to.exist;
+//            result4.done();
+//          });
+//        });
+//      });
+//    });
+//  });
+//});
 //
 //describe('/api/sync/:syncId/diffs', function () {
 //  it('should return a 200 status code if the req.body.diffs are valid', function (done){

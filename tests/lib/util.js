@@ -133,21 +133,19 @@ function authenticateAndConnect(options, callback) {
   });
 }
 
-function syncRouteConnect(options, callback){
+function syncRouteConnect(options, callback){ console.log("in syncRouteConnect")
   if(typeof options === 'function') {
     callback = options;
     options = {};
   }
 
-//  options.jar = options.jar || jar();
-
   request.get({
-        url: serverURL + '/api/sync/' + options.syncId,
-        jar: options.jar
-      }, function(err, res, body) {
-      expect(err).not.to.exist;
-      options.statusCode = res.statusCode;
-      callback(null, options);
+    url: serverURL + '/api/sync/' + options.syncId,
+    jar: options.jar
+  }, function(err, res, body) { console.log("in req.get cb");
+    expect(err).not.to.exist;
+    options.statusCode = res.statusCode;
+    callback(null, options);
   });
 }
 

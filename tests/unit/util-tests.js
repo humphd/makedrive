@@ -57,7 +57,7 @@ describe('Test util.js', function () {
     expect(username2).to.be.a.string;
     expect(username1).not.to.equal(username2);
   });
-
+//
   it('util.authenticate should signin the given user and set session.user.username', function(done) {
     var username = util.username();
     util.authenticate({username: username}, function(err, result) {
@@ -75,7 +75,7 @@ describe('Test util.js', function () {
       });
     });
   });
-
+//
   it('util.authenticate should work with no options object passed', function(done) {
     util.authenticate(function(err, result) {
       expect(err).not.to.exist;
@@ -92,7 +92,7 @@ describe('Test util.js', function () {
       expect(result.username).to.be.a.string;
       expect(result.done).to.be.a.function;
 
-      //result.done();
+      result.done();
 
       request.get({
         url: util.serverURL + '/',
@@ -105,4 +105,15 @@ describe('Test util.js', function () {
     });
   });
 
+  it('util.syncRouteConnect should access the route in the same way as the api/sync test block when nested within authenticatedConnection', function(done) { console.log("in test");
+    util.authenticatedConnection({done: done}, function(err, result1) { console.log("in authenticatedConnection");
+      expect(err).not.to.exist;
+      util.syncRouteConnect(result1, function(err, result2) { console.log("in syncRouteConnect cb");
+        expect(result2).to.exist;
+        expect(result2.statusCode).to.be.a.string;
+        expect(result2.done).to.be.a.function;
+        result2.done();
+      });
+    });
+  });
 });
