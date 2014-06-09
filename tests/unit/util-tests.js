@@ -111,14 +111,32 @@ describe('Test util.js', function(){
     });
   });
 
-  it('util.syncRouteConnect should access the route in the same way as the api/sync test block when nested within authenticatedConnection', function(done) { console.log("in test");
-    util.authenticatedConnection({username: 'debug', done: done}, function(err, result1) { console.log("in authenticatedConnection");
+  it('util.authenticatedConnection should accept done function', function(done) {
+    util.authenticatedConnection({done: done}, function(err, result) {
       expect(err).not.to.exist;
-      util.syncRouteConnect(result1, function(err, result2) { console.log("in syncRouteConnect cb");
-        expect(result2).to.exist;
-        expect(result2.statusCode).to.be.a.string;
-        expect(result2.done).to.be.a.function;
-        result2.done();
+      expect(result).to.exist;
+      expect(result.jar).to.exist;
+      expect(result.syncId).to.be.a.string;
+      expect(result.username).to.be.a.string;
+      expect(result.done).to.be.a.function;
+
+      result.done();
+    });
+  });
+
+
+  it('util.syncRouteConnect should access the route in the same way as the api/sync test block when nested within authenticatedConnection', function(done) {
+    util.authenticatedConnection({username: 'debug', done: done}, function(err, result) {
+      expect(err).not.to.exist;
+      expect(result.jar).to.exist;
+      expect(result.username).to.equal('debug');
+
+      util.syncRouteConnect(result, function(err, result) {
+        expect(err).not.to.exist;
+        expect(result).to.exist;
+        expect(result.statusCode).to.equal(200);
+        expect(result.done).to.be.a.function;
+        result.done();
       });
     });
   });

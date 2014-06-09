@@ -14,6 +14,7 @@ app.routes.post.forEach(function(route) {
 
 if(!mockAuthFound) {
   app.post('/mocklogin/:username', function(req, res) {
+console.log('/mocklogin route', req.param('username'));
     var username = req.param('username');
     if(!username){
       // Expected username.
@@ -35,6 +36,10 @@ function uniqueUsername() {
 }
 
 function getConnectionID(options, callback){
+  if(!(options && options.jar)) {
+    throw('Expected options.jar');
+  }
+
   var headers = {
    'Accept-Encoding': 'zlib',
    'Content-Type': 'text/event-stream'
@@ -89,8 +94,13 @@ function authenticate(options, callback){
     options = {};
   }
 
+console.log('options', options);
+
   options.jar = options.jar || jar();
   options.username = options.username || uniqueUsername();
+
+console.log('options.jar');
+console.dir(options.jar);
 
   request.post({
     url: serverURL + '/mocklogin/' + options.username,
@@ -111,6 +121,8 @@ function authenticateAndConnect(options, callback) {
     options = {};
   }
 
+console.log('authenticateAndConnect Options', options);
+
   options.jar = options.jar || jar();
 
   authenticate(options, function(err, result) {
@@ -118,6 +130,8 @@ function authenticateAndConnect(options, callback) {
       return callback(err);
     }
     var username = result.username;
+
+console.log('getConnectionId Options', options);
 
     getConnectionID(options, function(err, result){
       if(err) {
@@ -128,6 +142,7 @@ function authenticateAndConnect(options, callback) {
       result.username = username;
       result.done = function() {
         result.close();
+        console.log('calling done', !!options.done);
         options.done && options.done();
       };
 
@@ -136,16 +151,17 @@ function authenticateAndConnect(options, callback) {
   });
 }
 
-function syncRouteConnect(options, callback){ console.log("in syncRouteConnect")
-  if(typeof options === 'function') {
-    callback = options;
-    options = {};
+function syncRouteConnect(options, callback){
+  if(!(options && options.jar && options.syncId && callback)) {
+    throw('You must pass options, options.jar, options.syncId and callback');
   }
+
+console.log('syncRouteConnect Options', options);
 
   request.get({
     url: serverURL + '/api/sync/' + options.syncId,
     jar: options.jar
-  }, function(err, res, body) { console.log("in req.get cb");
+  }, function(err, res, body) {
     if(err) {
       return callback(err);
     }

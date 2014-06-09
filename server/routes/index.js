@@ -66,7 +66,6 @@ module.exports = function createRoutes( app ) {
    *                 client
    */
   app.get('/api/sync/:connectionId', middleware.authenticationHandler, function (req, res) {
-console.dir('req', req);
     var username = req.params.username,
         sync = Sync.retrieve( username, req.param( 'connectionId' ) );
 
@@ -79,14 +78,14 @@ console.dir('req', req);
     if ( !Sync.connections.doesIdMatchUser( req.param( 'connectionId' ), username ) ) {
       return res.json(400, { message: "User/client missmatch: connectionId doesn't match user!" });
     }
-
+console.log('Trying to start sync session ' + sync.id);
     sync.start(function( err, id ) {
       if ( err ) {
         console.error('sync.start error: ' + err);
         return res.json( 500, err );
       }
 
-      console.log('starting sync session for ' + username + ' syncID ' + id);
+      console.log('started sync session for ' + username + ' syncID ' + id);
       res.json(200, {
         syncId: id
       });
