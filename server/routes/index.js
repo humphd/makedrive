@@ -27,7 +27,7 @@ module.exports = function createRoutes( app ) {
         res.write("data: " + 'You are out of date! Sync from source to update current session.' + '\n\n');
       }
     };
-console.log('here')
+
     // Create this client's connection
     var sync = req.session.sync = Sync.create( username, onOutOfDate );
 
@@ -84,6 +84,7 @@ console.log('here')
         return res.json( 500, err );
       }
 
+      console.log('starting sync session for ' + username + ' syncID ' + id);
       res.json(200, {
         syncId: id
       });

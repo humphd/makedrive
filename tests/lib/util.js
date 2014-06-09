@@ -96,9 +96,12 @@ function authenticate(options, callback){
     url: serverURL + '/mocklogin/' + options.username,
     jar: options.jar
   }, function(err, res, body) {
-      expect(err).not.to.exist;
-      expect(res.statusCode).to.equal(200);
-      callback(null, options);
+    if(err) {
+      return callback(err);
+    }
+
+    expect(res.statusCode).to.equal(200);
+    callback(null, options);
   });
 }
 
@@ -143,7 +146,10 @@ function syncRouteConnect(options, callback){ console.log("in syncRouteConnect")
     url: serverURL + '/api/sync/' + options.syncId,
     jar: options.jar
   }, function(err, res, body) { console.log("in req.get cb");
-    expect(err).not.to.exist;
+    if(err) {
+      return callback(err);
+    }
+
     options.statusCode = res.statusCode;
     callback(null, options);
   });
@@ -166,9 +172,12 @@ function sourceRouteConnect(options, extras, callback){
 //  options.jar = options.jar;
 
   request.post(extras, function(err, res, body) {
-      expect(err).not.to.exist;
-      options.statusCode = res.statusCode;
-      callback(null, options);
+    if(err) {
+      return callback(err);
+    }
+
+    options.statusCode = res.statusCode;
+    callback(null, options);
   });
 }
 
@@ -189,10 +198,12 @@ function csRouteConnect(options, extras, callback){
 //  options.jar = options.jar;
 
   request.get(extras, function(err, res, body) {
-      expect(err).not.to.exist;
-      options.statusCode = res.statusCode;
-      options.body = body;
-      callback(null, options);
+    if(err) {
+      return callback(err);
+    }
+    options.statusCode = res.statusCode;
+    options.body = body;
+    callback(null, options);
   });
 }
 
@@ -213,9 +224,11 @@ function diffRouteConnect(options, extras, callback){
 //  options.jar = options.jar;
 
   request.put(extras, function(err, res, body) {
-      expect(err).not.to.exist;
-      options.statusCode = res.statusCode;
-      callback(null, options);
+    if(err) {
+      return callback(err);
+    }
+    options.statusCode = res.statusCode;
+    callback(null, options);
   });
 }
 
