@@ -3,7 +3,7 @@ var util = require('../../lib/util.js');
 var MakeDrive = require('../../../client/src');
 var Filer = require('../../../lib/filer.js');
 
-describe('MakeDrive Client - sync deep tree structure', function(){
+describe('MakeDrive Client - sync many small files', function(){
   var provider;
 
   beforeEach(function() {
@@ -13,22 +13,35 @@ describe('MakeDrive Client - sync deep tree structure', function(){
     provider = null;
   });
 
+  function smallFile(number) {
+    return '<!doctype html> \
+           <head> \
+             <meta charset="utf-8"> \
+             <title> Small File ' + number + ' </title> \
+           </head> \
+           <body> \
+             <p>This is small file ' + number + '.</p> \
+           </body> \
+           </html>';
+  }
+
   /**
-   * This test creates series of deep dir trees, syncs, and checks that
+   * This test creates 100 small files in a dir, syncs, and checks that
    * they exist on the server. It then removes them, and makes sure a
    * downstream sync brings them back.
    */
-  it('should sync an deep dir structure', function(done) {
+  it('should sync many small files', function(done) {
     util.authenticatedConnection(function( err, result ) {
       expect(err).not.to.exist;
 
       var fs = MakeDrive.fs({provider: provider, manual: true});
       var sync = fs.sync;
 
-      // Make a directory 20 levels deep with one file inside.
-      var layout = {
-        '/1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/file': 'This is a file'
-      };
+      // Make a layout with /project and 100 small html files inside
+      var layout = {};
+      for(var i=0; i<100; i++) {
+        layout['/project/small-file' + i + '.html'] = smallFile(i);
+      }
 
       sync.once('connected', function onConnected() {
         util.createFilesystemLayout(fs, layout, function(err) {
