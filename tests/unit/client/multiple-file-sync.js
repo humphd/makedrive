@@ -52,13 +52,16 @@ describe('MakeDrive Client - sync multiple files', function(){
 
           // Re-sync with server and make sure we get our files back
           sync.once('connected', function onSecondDownstreamSync() {
-            sync.disconnect();
 
-            util.ensureFilesystem(fs, layout, function(err) {
-              expect(err).not.to.exist;
+            sync.once('disconnected', function onSecondDisconnected() {
+              util.ensureFilesystem(fs, layout, function(err) {
+                expect(err).not.to.exist;
 
-              done();
+                done();
+              });
             });
+
+            sync.disconnect();
           });
 
           // Get a new token for this second connection
