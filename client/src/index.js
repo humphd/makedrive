@@ -10,10 +10,18 @@
  * A number of configuration options can be passed to the fs() function.
  * These include:
  *
+ * - root=<String> - a path to use as the root for sync. Normally this
+ * will be / (i.e., the root directory) and mean that the user's entire
+ * filesystem is synced.  Specifying another path for options.root
+ * means that only a portion of the filesystem is watched/synced.
+ * The given path must be a valid path, but doesn't need to exist (yet).
+ *
  * - manual=true - by default the filesystem syncs automatically in
  * the background. This disables it.
+ *
  * - memory=true - by default we use a persistent store (indexeddb
  * or websql). This overrides and uses a temporary ram disk.
+ *
  * - provider=<Object> - a Filer data provider to use instead of the
  * default provider normally used. The provider given should already
  * be instantiated (i.e., don't pass a constructor function).
@@ -79,6 +87,8 @@ var _fs;
 function createFS(options) {
   options.manual = options.manual === true;
   options.memory = options.memory === true;
+  // Given path should be absolute, but make sure anyway
+  options.root = options.root ? Filer.Path.resolve('/', options.root) : '/';
 
   // Use a supplied provider, in memory RAM disk, or Fallback provider (default).
   var provider;
@@ -129,7 +139,7 @@ function createFS(options) {
 
     // Make sure the path exists, otherwise use root dir
     _fs.exists(path, function(exists) {
-      path = exists ? path : '/';
+      path = exists ? path : options.root;
       sync.manager.syncPath(path);
     });
   };
@@ -177,17 +187,17 @@ function createFS(options) {
       // Start auto-sync'ing fs based on changes every 1 min.
       // TODO: provide more options to control what/when we auto-sync
       //       https://github.com/mozilla/makedrive/issues/20
-      watcher = _fs.watch('/', {recursive: true}, function(event, filename) {
+      watcher = _fs.watch(options.root, {recursive: true}, function(event, filename) {
         // Mark the fs as dirty, and we'll sync on next interval
         needsSync = true;
 
         // Also try to start a sync now, which might fail if we're already syncing.
-        sync.request('/');
+        sync.request(options.root);
       });
 
       syncInterval = setInterval(function() {
         if(needsSync) {
-          sync.request('/');
+          sync.request(options.root);
           needsSync = false;
         }
       }, 60 * 1000);
