@@ -33,6 +33,15 @@ module.exports = function(grunt) {
             standalone: "MakeDrive"
           }
         }
+      },
+      makedriveTests: {
+        src: ["./tests/browser/**/*.js", "./client/src/index.js"],
+        dest: "./client/dist/makedrive-tests.js",
+        options: {
+          browserifyOptions: {
+            standalone: "MakeDrive"
+          }
+        }
       }
     },
 
@@ -247,6 +256,7 @@ module.exports = function(grunt) {
 
   // Simple multi-tasks
   grunt.registerTask( "test", [ "jshint", "exec:run_mocha" ] );
+  grunt.registerTask( "testBrowser", [ "jshint", "browserify:makedriveTests" ] );
   grunt.registerTask( "default", [ "test" ] );
   grunt.registerTask( "build", [ "clean", "browserify:makedriveClient", "uglify" ] );
   grunt.registerTask( "makedriveClient", [ "clean", "browserify:makedriveClient", "uglify:develop" ] );

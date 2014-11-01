@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>MakeDrive Browser Tests</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/mocha/1.21.4/mocha.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mocha/1.21.4/mocha.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/chai/1.9.2/chai.min.js"></script>
+    <script>
+      window.expect = chai.expect;
+
+      mocha.setup('bdd').timeout(5000).slow(250);
+
+      window.onload = function() {
+console.log(window
+        mocha.checkLeaks();
+        mocha.run();
+      };
+    </script>
+    <script src="../../client/dist/makedrive-tests.js"></script>
+ </head>
+  <body>
+    <div id="mocha"></div>
+  </body>
+</html>
